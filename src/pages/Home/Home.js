@@ -1,24 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Spinner } from "react-bootstrap";
 import InfiniteScroll from "react-infinite-scroll-component";
-
+import styled from "styled-components";
 import Header from "../../components/Header/Header";
 import PokeCard from "../../components/Pokemon/PokeCard";
 import Search from "../../components/Others/Search";
 import LoadingCard from "../../components/Loading/LoadingCard";
-import Footer from "../../components/Others/Footer";
 import api from "../../services/api";
 import Colors from "../../styles/Colors";
 import { SavePokemons, VerifyPokemons } from "../../functions/storage";
 
 var pokemonsOriginal = [];
 const perPage = 16;
-const limit = 48; //default = 898
+const limit = 151; //default = 898
 var max = 0;
+
+function leadingZeros(n) {
+  if (n > 0 && n < 10) {
+    return `00${n}`;
+  } else if (n > 9 && n < 100) {
+    return `0${n}`;
+  } else {
+    return `${n}`;
+  }
+}
+const Box = styled.div`
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  border-radius: 10px;
+  color: white;
+`;
+
 
 function Home({ history, ...props }) {
   const { query } = props.match.params;
-
+  const [allPokemons, setAllPokemons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pokemons, setPokemons] = useState([]);
 
@@ -29,7 +46,7 @@ function Home({ history, ...props }) {
 
   useEffect(() => {
     setLoading(true);
-    if (query == undefined) {
+    if (query === undefined) {
       HandlerResult(
         pokemonsOriginal.length,
         pokemonsOriginal.slice(0, perPage)
@@ -47,7 +64,7 @@ function Home({ history, ...props }) {
 
     HandlerResult(filterPokemons.length, filterPokemons.slice(0, perPage));
     setLoading(false);
-  }, [query]);
+  }, [history, query]);
 
   useEffect(() => {
     setLoading(true);
@@ -58,7 +75,7 @@ function Home({ history, ...props }) {
     }
 
     pokemonsOriginal = listLocal;
-    if (query != undefined) {
+    if (query !== undefined) {
       var filterPokemons = listLocal.filter(
         (i) => i.name.includes(query.toLowerCase()) || i.number.includes(query)
       );
@@ -68,6 +85,7 @@ function Home({ history, ...props }) {
       HandlerResult(listLocal.length, listLocal.slice(0, perPage));
     }
     setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function LoadPokemons() {
@@ -84,8 +102,9 @@ function Home({ history, ...props }) {
         types: pokeDetails.data.types,
         number: pokeDetails.data.id.toString().padStart(3, "0"),
         image:
-          pokeDetails.data.sprites.versions["generation-v"]["black-white"]
-            .animated.front_default,
+          pokeDetails.data.sprites.versions["generation-vii"][
+            "ultra sun and ultra moon"
+          ].animated.front_default,
       };
       all.push(obj);
     }
@@ -99,7 +118,7 @@ function Home({ history, ...props }) {
   function LoadMore() {
     setTimeout(() => {
       var limit = pokemons.length + perPage;
-      if (query == undefined) {
+      if (query === undefined) {
         setPokemons(pokemonsOriginal.slice(0, limit));
       } else {
         var filterPokemons = pokemonsOriginal.filter((item) => {
@@ -118,6 +137,25 @@ function Home({ history, ...props }) {
       <Header />
 
       <Container fluid>
+        <button
+          onClick={() => {
+            setAllPokemons([
+              ...allPokemons,
+              leadingZeros(allPokemons.length + 1),
+            ]);
+            console.log(allPokemons);
+          }}
+        >
+          PRESS ME
+        </button>
+        <Container>
+        {allPokemons.map((allPokemons, i) => (
+          <Box key={i}>
+            {`#${allPokemons}`}
+            <img src={`https://assets.pokemon.com/assets/cms2/img/pokedex/detail/${allPokemons}.png`} alt="Pokemon"></img>
+          </Box>
+        ))}
+      </Container>
         <Search history={history} query={query} />
         {loading ? (
           <LoadingCard qty={12} />
@@ -138,11 +176,6 @@ function Home({ history, ...props }) {
                 </Spinner>
               </div>
             }
-            endMessage={
-              <p className="text-light" style={{ textAlign: "center" }}>
-                <b>Yay! You have seen it all</b>
-              </p>
-            }
           >
             <Row>
               {pokemons.map((item) => {
@@ -161,7 +194,6 @@ function Home({ history, ...props }) {
           </InfiniteScroll>
         )}
       </Container>
-      <Footer />
     </div>
   );
 }

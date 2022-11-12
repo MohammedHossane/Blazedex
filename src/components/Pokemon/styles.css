@@ -19,7 +19,7 @@
 .pokemon-name {
   font-size: 20px;
   text-transform: capitalize;
-  color: white;
+  color: var(--darkest_gray);
   text-align: center;
   margin-top: 14px;
   font-weight: bold;
@@ -28,7 +28,7 @@
 
 .pokemon-number {
   margin-top: 4px;
-  color: var(--lightest_gray);
+  color: var(--darkest_gray);
 }
 
 .type-item {
@@ -550,6 +550,8 @@
 .info-item {
   width: 50%;
   margin-bottom: 30px;
+  color: var(--darkest_gray);
+
 }
 
 .info-item h4 {

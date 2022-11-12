@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -8,8 +9,6 @@ import PokeOverview from "../../components/Pokemon/PokeOverview";
 import PokeInfo from "../../components/Pokemon/PokeInfo";
 import PokeStats from "../../components/Pokemon/PokeStats";
 import PokeEvolution from "../../components/Pokemon/PokeEvolution";
-import Footer from "../../components/Others/Footer";
-import ModalError from "../../components/Others/ModalError";
 import api from "../../services/api";
 import axios from "axios";
 
@@ -18,25 +17,25 @@ function Details({ history, ...props }) {
 
   const [loading, setLoading] = useState(true);
   const [details, setDetails] = useState({});
-  const [showModalError, setShowModalError] = useState(false);
 
   useEffect(() => {
     function LoadPokemon() {
       api
         .get(`/pokemon/${name}`)
         .then((response) => {
-          if (response.status == 200) {
+          if (response.status === 200) {
             LoadSpecies(response.data);
           }
         })
         .catch((error) => {
-          setShowModalError(true);
+        console.log(error);
         });
     }
 
-    if (name == undefined) history.push({ pathname: "/" });
+    if (name === undefined) history.push({ pathname: "/" });
     window.scrollTo(0, 0);
     LoadPokemon();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.location.pathname]);
 
   async function LoadSpecies(poke) {
@@ -48,10 +47,10 @@ function Details({ history, ...props }) {
       var flavor_text_shield = "";
       var flavor_text_default = "";
       pokeSpecies.data.flavor_text_entries.map((item) => {
-        if (item.language.name != "en") return false;
-        if (item.version.name == "sword") {
+        if (item.language.name !== "en") return false;
+        if (item.version.name === "sword") {
           flavor_text_sword = item.flavor_text;
-        } else if (item.version.name == "shield") {
+        } else if (item.version.name === "shield") {
           flavor_text_shield = item.flavor_text;
         }
         flavor_text_default = item.flavor_text;
@@ -60,7 +59,7 @@ function Details({ history, ...props }) {
       var abilities = "";
       poke.abilities.map((item, index) => {
         abilities += `${item.ability.name}${
-          poke.abilities.length == index + 1 ? "" : ", "
+          poke.abilities.length === index + 1 ? "" : ", "
         }`;
       });
 
@@ -84,18 +83,13 @@ function Details({ history, ...props }) {
       setDetails(obj);
       setLoading(false);
     } catch (error) {
-      setShowModalError(true);
+      console.log(error);
     }
   }
 
   return (
     <div>
       <Header />
-      <ModalError
-        history={history}
-        show_modal_error={showModalError}
-        msg={"Ops! Could not load the information for this pokemon."}
-      />
       <Container fluid className="text-light mb-4">
         {loading ? (
           <LoadingDetails />
@@ -136,7 +130,6 @@ function Details({ history, ...props }) {
           </>
         )}
       </Container>
-      <Footer />
     </div>
   );
 }

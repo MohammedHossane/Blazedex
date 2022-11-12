@@ -1,3 +1,4 @@
+/* eslint-disable no-script-url */
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -47,7 +48,7 @@ const PokeCard = ({ name, id, types, click }) => {
               key={index}
               className={` 
                   ${item.type.name}
-                  type-item ${types.length == 1 && "w-100"}`}
+                  type-item ${types.length === 1 && "w-100"}`}
             >
               <p className="mb-0 text-uppercase">{item.type.name}</p>
             </div>

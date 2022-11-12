@@ -14,7 +14,7 @@
 
 /* Colors */
 :root {
-  --brand_dark: #212529;
+  --brand_dark: #d82d2d;
   --brand_green: #13ce66;
   --brand_pink: #fe8bc4;
   --brand_red: #ff0000;
@@ -49,7 +49,7 @@
   --steel: #b7b7ce;
   --fairy: #d685ad;
 
-  --card_gray: #495057;
+  --card_gray: #ffffff;
 }
 
 body {
